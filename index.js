@@ -51,7 +51,6 @@ async function quit() {
 }
 async function jokee(msg) {
     await join()
-    global.body = '';
     var jokee = await got('https://witz.api.minionflo.net', {json: true})
     joke = jokee.body.joke
     var joke_tts = googleTTS.getAudioUrl(joke, {
