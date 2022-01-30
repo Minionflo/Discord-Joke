@@ -1,0 +1,8 @@
+node_modules
+.gitignore
+.git
+package-lock.json
+build.sh
+README.md
+LICENSE
+secret
