@@ -49,7 +49,7 @@ async function quit() {
     connection.disconnect()
     return true
 }
-async function jokee() {
+async function jokee(msg) {
     await join()
     global.body = '';
     var jokee = await got('https://witz.api.minionflo.net', {json: true})
@@ -59,24 +59,28 @@ async function jokee() {
         slow: false,
         host: 'translate.google.com'
     })
-    console.log(joke_tts)
     player = await connection.play('https://' + joke_tts)
-    console.log(player)
+    player.on('finish', () => {quit()})
     return joke
 }
 
 var cmdmap = {
     join: cmd_join,
     quit: cmd_quit,
-    joke: cmd_joke
+    joke: cmd_joke,
+    channel: cmd_channel,
 }
 
 async function cmd_joke(msg, args) {
-    var joke = await jokee()
+    var joke = await jokee(msg)
     msg.reply(joke)
 }
-function cmd_join() {await join()}
-function cmd_quit() {await quit()}
+async function cmd_join() {await join()}
+async function cmd_quit() {await quit()}
+async function cmd_channel(msg, args) {
+    config_channel = args[0]
+    msg.reply("Channel set to " + config_channel)
+}
 
 client.on('message', (msg) => {
     var cont   = msg.content,
