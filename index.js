@@ -63,7 +63,7 @@ async function jokee(msg) {
     })
     player = await connection.play('https://' + joke_tts)
     player.on('finish', async () => {
-        await sleep(500)
+        await sleep(300)
         player = await connection.play('./badumtss.mp3')
         player.on('finish', () => {
             quit()
@@ -78,11 +78,12 @@ var cmdmap = {
     joke: cmd_joke,
     channel: cmd_channel,
     random: cmd_random,
+    badumtss: cmd_badumtss,
 }
 
 async function cmd_joke(msg, args) {
-    var joke = await jokee(msg)
-    msg.reply(joke)
+    await jokee(msg)
+    msg.reply("Started joke")
 }
 async function cmd_join() {await join()}
 async function cmd_quit() {await quit()}
@@ -94,6 +95,13 @@ async function cmd_random(msg, args) {
     var random = Math.floor(Math.random() * args[0] * 1000)
     await sleep(random)
     jokee(msg)
+}
+async function cmd_badumtss(msg, args) {
+    await join()
+    player = await connection.play('./badumtss.mp3')
+    player.on('finish', () => {
+        quit()
+    })
 }
 
 client.on('message', (msg) => {
