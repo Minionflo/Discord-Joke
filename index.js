@@ -11,6 +11,9 @@ var config_token = process.env.TOKEN
 global.config_prefix = process.env.PREFIX
 global.config_status = process.env.STATUS
 global.config_statustype = process.env.STATUSTYPE
+global.config_channel = process.env.CHANNEL
+global.config_controlchannel = process.env.CONTROLCHANNEL
+global.config_role = process.env.ROLE
 
 if(process.argv.slice(2) == "test") {
     var secret = fs.readFileSync('secret', 'utf8').split(/\r?\n/)
