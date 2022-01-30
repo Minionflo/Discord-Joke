@@ -59,7 +59,13 @@ async function jokee(msg) {
         host: 'translate.google.com'
     })
     player = await connection.play('https://' + joke_tts)
-    player.on('finish', () => {quit()})
+    player.on('finish', async () => {
+        await sleep(500)
+        player = await connection.play('./badumtss.mp3')
+        player.on('finish', () => {
+            quit()
+        })
+    })
     return joke
 }
 
@@ -68,6 +74,7 @@ var cmdmap = {
     quit: cmd_quit,
     joke: cmd_joke,
     channel: cmd_channel,
+    random: cmd_random,
 }
 
 async function cmd_joke(msg, args) {
@@ -79,6 +86,11 @@ async function cmd_quit() {await quit()}
 async function cmd_channel(msg, args) {
     config_channel = args[0]
     msg.reply("Channel set to " + config_channel)
+}
+async function cmd_random(msg, args) {
+    var random = Math.floor(Math.random() * args[0] * 1000)
+    await sleep(random)
+    jokee(msg)
 }
 
 client.on('message', (msg) => {
