@@ -55,20 +55,21 @@ async function quit() {
 async function jokee(msg) {
     await join()
     var jokee = await got('https://witz.api.minionflo.net', {json: true})
-    joke = jokee.body.joke
-    var joke_tts = googleTTS.getAudioUrl(joke, {
+    joke = await jokee.body.joke
+    var joke_tts = await googleTTS.getAudioUrl(joke, {
         lang: 'de',
         slow: false,
         host: 'translate.google.com'
     })
     player = await connection.play('https://' + joke_tts)
-    player.on('finish', async () => {
+    await player.on('finish', async () => {
         await sleep(300)
         player = await connection.play('./badumtss.mp3')
-        player.on('finish', () => {
-            quit()
+        await player.on('finish', async () => {
+            await quit()
         })
     })
+    await console.log("Joke: " + joke)
     return joke
 }
 
@@ -82,7 +83,14 @@ var cmdmap = {
 }
 
 async function cmd_joke(msg, args) {
-    await jokee(msg)
+    var runs = 0
+    var todo = 1
+    if(args[0] != undefined) { todo = args[0] }
+    while(runs < todo) {
+        await jokee(msg)
+        console.log(todo)
+        runs++
+    }
     msg.reply("Started joke")
 }
 async function cmd_join() {await join()}
