@@ -5,7 +5,7 @@ const googleTTS = require('google-tts-api');
 const app = require('express')();
 
 global.client = new Discord.Client();
-app.listen("8080", () => console.log("Started"))
+app.listen("80", () => console.log("Started"))
 const sleep = (ms = 500) => new Promise((r) => setTimeout(r, ms));
 
 var config_token = process.env.TOKEN
