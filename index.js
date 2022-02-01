@@ -1,10 +1,11 @@
 const Discord = require('discord.js');
-const https = require('https');
 const fs = require('fs');
 const got = require('got');
 const googleTTS = require('google-tts-api');
+const app = require('express')();
 
 global.client = new Discord.Client();
+app.listen("8080", () => console.log("Started"))
 const sleep = (ms = 500) => new Promise((r) => setTimeout(r, ms));
 
 var config_token = process.env.TOKEN
@@ -29,7 +30,31 @@ if(process.argv.slice(2) == "test") {
 global.connection = null
 var player = null
 var speaking = null
-global.queue = []
+
+app.get("/joke", (req, res) => {
+    res.status(200)
+    jokee()
+    res.end("OK");
+})
+
+app.get("/joke", (req, res) => {
+    res.status(200)
+    jokee()
+    res.end("OK");
+})
+
+app.get("/badumtss", (req, res) => {
+    res.status(200)
+    cmd_badumtss(null, null)
+    res.end("OK");
+})
+
+app.get("/speak/:text", (req, res) => {
+    res.status(200)
+    cmd_speak(null, req.params.text.split(" "))
+    res.end("OK");
+})
+
 
 client.on('ready', () => {
     activity()
@@ -52,24 +77,18 @@ async function quit() {
     connection.disconnect()
     return true
 }
-async function jokee(msg) {
+async function jokee() {
     await join()
     var jokee = await got('https://witz.api.minionflo.net', {json: true})
     joke = await jokee.body.joke
-    var joke_tts = await googleTTS.getAudioUrl(joke, {
-        lang: 'de',
-        slow: false,
-        host: 'translate.google.com'
-    })
+    var joke_tts = await googleTTS.getAudioUrl(joke, { lang: 'de', slow: false, host: 'translate.google.com' })
     player = await connection.play('https://' + joke_tts)
-    await player.on('finish', async () => {
+    await player.once('finish', async () => {
         await sleep(300)
         player = await connection.play('./badumtss.mp3')
-        await player.on('finish', async () => {
-            await quit()
-        })
+        await sleep(2500)
+        await quit()
     })
-    await console.log("Joke: " + joke)
     return joke
 }
 
@@ -80,18 +99,12 @@ var cmdmap = {
     channel: cmd_channel,
     random: cmd_random,
     badumtss: cmd_badumtss,
+    speak: cmd_speak
 }
 
-async function cmd_joke(msg, args) {
-    var runs = 0
-    var todo = 1
-    if(args[0] != undefined) { todo = args[0] }
-    while(runs < todo) {
-        await jokee(msg)
-        console.log(todo)
-        runs++
-    }
-    msg.reply("Started joke")
+function cmd_joke(msg, args) {
+    jokee()
+    msg.channel.send("Joke started")
 }
 async function cmd_join() {await join()}
 async function cmd_quit() {await quit()}
@@ -102,7 +115,7 @@ async function cmd_channel(msg, args) {
 async function cmd_random(msg, args) {
     var random = Math.floor(Math.random() * args[0] * 1000)
     await sleep(random)
-    jokee(msg)
+    jokee()
 }
 async function cmd_badumtss(msg, args) {
     await join()
@@ -110,6 +123,18 @@ async function cmd_badumtss(msg, args) {
     player.on('finish', () => {
         quit()
     })
+}
+
+async function cmd_speak(msg, args) {
+    await join()
+    var speakk = args.join(" ")
+    var joke_tts = await googleTTS.getAudioUrl(speakk, { lang: 'de', slow: false, host: 'translate.google.com' })
+    player = await connection.play('https://' + joke_tts)
+    await player.once('finish', async () => {
+        await sleep(300)
+        await quit()
+    })
+    return speakk
 }
 
 client.on('message', (msg) => {
