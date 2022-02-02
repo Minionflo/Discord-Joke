@@ -37,15 +37,9 @@ app.get("/joke", (req, res) => {
     res.end("OK");
 })
 
-app.get("/joke", (req, res) => {
+app.get("/sound/:sound", (req, res) => {
     res.status(200)
-    jokee()
-    res.end("OK");
-})
-
-app.get("/badumtss", (req, res) => {
-    res.status(200)
-    cmd_badumtss(null, null)
+    sound(req.params.sound)
     res.end("OK");
 })
 
@@ -85,44 +79,37 @@ async function jokee() {
     player = await connection.play('https://' + joke_tts)
     await player.once('finish', async () => {
         await sleep(300)
-        player = await connection.play('./badumtss.mp3')
+        player = await connection.play('./sound/badumtss.mp3')
         await sleep(2500)
         await quit()
     })
     return joke
 }
 
-var cmdmap = {
-    join: cmd_join,
-    quit: cmd_quit,
-    joke: cmd_joke,
-    channel: cmd_channel,
-    random: cmd_random,
-    badumtss: cmd_badumtss,
-    speak: cmd_speak
-}
-
-function cmd_joke(msg, args) {
-    jokee()
-    msg.channel.send("Joke started")
-}
-async function cmd_join() {await join()}
-async function cmd_quit() {await quit()}
-async function cmd_channel(msg, args) {
-    config_channel = args[0]
-    msg.reply("Channel set to " + config_channel)
-}
-async function cmd_random(msg, args) {
-    var random = Math.floor(Math.random() * args[0] * 1000)
-    await sleep(random)
-    jokee()
-}
-async function cmd_badumtss(msg, args) {
+async function sound() {
     await join()
-    player = await connection.play('./badumtss.mp3')
+    player = await connection.play('./sound/' + args[0] + '.mp3')
     player.on('finish', () => {
         quit()
     })
+}
+
+var cmdmap = {
+    join: cmd_join,
+    quit: cmd_quit,
+    sound: cmd_sound,
+    joke: cmd_joke,
+    speak: cmd_speak
+}
+
+async function cmd_join() {await join()}
+async function cmd_quit() {await quit()}
+async function cmd_joke(msg, args) {
+    jokee()
+    msg.channel.send("Joke started")
+}
+async function cmd_sound(msg, args) {
+    sound(args[0])
 }
 
 async function cmd_speak(msg, args) {
