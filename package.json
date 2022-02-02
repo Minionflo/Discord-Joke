@@ -12,12 +12,9 @@
   "license": "ISC",
   "dependencies": {
     "@discordjs/opus": "^0.7.0",
-    "bufferutil": "^4.0.4",
     "discord.js": "12.5.3",
     "express": "^4.17.2",
-    "ffmpeg-static": "^4.4.0",
     "google-tts-api": "^2.0.2",
     "got": "^9.6.0",
-    "sodium": "^3.0.2"
   }
 }
