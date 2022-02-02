@@ -86,9 +86,9 @@ async function jokee() {
     return joke
 }
 
-async function sound() {
+async function sound(soud) {
     await join()
-    player = await connection.play('./sound/' + args[0] + '.mp3')
+    player = await connection.play('./sound/' + soud + '.mp3')
     player.on('finish', () => {
         quit()
     })
