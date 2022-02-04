@@ -121,6 +121,7 @@ async function cmd_sound(msg, args) {
 async function cmd_speak(msg, args) {
     await join()
     var speakk = args.join(" ")
+    if(speakk.length > 200) {console.log("Too Long")}
     var joke_tts = await googleTTS.getAudioUrl(speakk, { lang: 'de', slow: false, host: 'translate.google.com' })
     player = await connection.play('https://' + joke_tts)
     await player.once('finish', async () => {
