@@ -37,6 +37,12 @@ app.get("/joke", (req, res) => {
     res.end("OK");
 })
 
+app.get("/quit", (req, res) => {
+    res.status(200)
+    quit()
+    res.end("OK");
+})
+
 app.get("/sound/:sound", (req, res) => {
     res.status(200)
     sound(req.params.sound)
