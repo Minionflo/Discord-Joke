@@ -15,6 +15,7 @@ global.config_statustype = process.env.STATUSTYPE
 global.config_channel = process.env.CHANNEL
 global.config_controlchannel = process.env.CONTROLCHANNEL
 global.config_role = process.env.ROLE
+global.config_permanent_talk = process.env.PERMANENT_TALK
 
 if(process.argv.slice(2) == "test") {
     var secret = fs.readFileSync('secret', 'utf8').split(/\r?\n/)
@@ -68,7 +69,9 @@ async function quit() {
     if(connection == null) {
         return false
     }
-    connection.disconnect()
+    if(config_permanent_talk != "true") {
+        connection.disconnect()
+    }
     return true
 }
 async function jokee() {
