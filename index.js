@@ -91,6 +91,9 @@ async function jokee() {
 
 async function sound(soud) {
     await join()
+    if(soud == "") {
+        player = await connection.play('./sound/error.mp3')
+    }
     player = await connection.play('./sound/' + soud + '.mp3')
     player.on('finish', () => {
         quit()
