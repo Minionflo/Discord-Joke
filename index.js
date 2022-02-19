@@ -91,8 +91,12 @@ async function jokee() {
 
 async function sound(soud) {
     await join()
-    if(soud == "") {
+    if(soud == undefined) {
         player = await connection.play('./sound/error.mp3')
+        player.on('finish', () => {
+            quit()
+        })
+        return
     }
     player = await connection.play('./sound/' + soud + '.mp3')
     player.on('finish', () => {
@@ -121,6 +125,13 @@ async function cmd_sound(msg, args) {
 async function cmd_speak(msg, args) {
     await join()
     var speakk = args.join(" ")
+    if(args == []) {
+        player = await connection.play('./sound/error.mp3')
+        player.on('finish', () => {
+            quit()
+        })
+        return
+    }
     var joke_tts = await googleTTS.getAudioUrl(speakk, { lang: 'de', slow: false, host: 'translate.google.com' })
     player = await connection.play('https://' + joke_tts)
     await player.once('finish', async () => {
